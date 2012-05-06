@@ -15,25 +15,30 @@ def SphereMesh(sphereRadius):
   cubit.cmd('volume 1 name "mouseleg" ')
   idhealthy = cubit.get_id_from_name('mouseleg')
   print "id" ,idhealthy
+  cubit.cmd('volume 1   copy reflect x ')
+  cubit.cmd('volume all copy reflect y ')
+  # imprint and merge
+  cubit.cmd('imprint volume all ')
+  cubit.cmd('merge   volume all ')
   
   # set size
-  nelem = 10
+  nelem = 6
   meshSize = sphereRadius / nelem 
-  cubit.cmd('volume  1 size %f' %   meshSize )
+  cubit.cmd('volume  all size %f' %   meshSize )
   ## # mesh 
   cubit.cmd('list volume  1')
-  cubit.cmd('volume  1 scheme tetprimitive')
-  cubit.cmd('mesh volume  1')
+  cubit.cmd('volume  all scheme tetprimitive')
+  cubit.cmd('mesh volume  all')
   
   # export in pieces
   cubit.cmd('reset genesis')
-  cubit.cmd('block 1 volume  1')
+  cubit.cmd('block 1 volume  1 2 3 4')
   cubit.cmd('block 1 name "mouseleg"  ')
   # add BC
   #cubit.cmd('skin volume all make sideset 2')
-  cubit.cmd('sideset 2 surface 1 2 3')
+  cubit.cmd('sideset 2 surface 2 6 10 14')
   cubit.cmd('sideset 2 name "neumann" ')
-  cubit.cmd('sideset 4 surface 4 ')
+  cubit.cmd('sideset 4 surface 4 8 12 16')
   cubit.cmd('sideset 4 name "fluence" ')
   #cubit.cmd('nodeset 1 volume 17 18 19')
   #cubit.cmd('nodeset 1 name "dirichletApplicator"')
@@ -42,7 +47,7 @@ def SphereMesh(sphereRadius):
   #
   # scale from [mm] to [m] and write'
   #cubit.cmd('volume all scale 0.001')
-  cubit.cmd('export mesh "SphereMesh.e" overwrite' )
+  cubit.cmd('export mesh "sphereMesh.e" overwrite' )
 # end def SphereMesh
 ##################################################################
 def ParseDakotaFile(param_file):
