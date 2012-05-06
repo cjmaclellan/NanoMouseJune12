@@ -46,7 +46,7 @@ def SphereMesh(sphereRadius):
   #cubit.cmd('nodeset 2 name "dirichletVessel"')
   #
   # scale from [mm] to [m] and write'
-  #cubit.cmd('volume all scale 0.001')
+  cubit.cmd('volume all scale 0.001')
   cubit.cmd('export mesh "sphereMesh.e" overwrite' )
 # end def SphereMesh
 ##################################################################
