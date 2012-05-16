@@ -1,0 +1,14 @@
+#!/bin/bash
+# simple wrapper 
+#  redirect from /dev/null to save system file system
+num=$(echo $1 | awk -F. '{print $NF}')
+CONCURRENCY=3
+#number of processors per application job
+APPLIC_PROCS=8
+
+# node offset
+RELATIVE_NODE=$(( (num - 1) % CONCURRENCY * APPLIC_PROCS ))
+
+#echo ibrun -n $APPLIC_PROCS -o $RELATIVE_NODE python /data/fuentes/mdacc/uqModelStudy/deltapModeling.py $1 $2  > $2.log
+ibrun -n $APPLIC_PROCS -o $RELATIVE_NODE python /work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/deltapModeling.py $1 $2 < /dev/null >  $2.log
+#gzip -f $2.log

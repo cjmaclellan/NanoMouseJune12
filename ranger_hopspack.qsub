@@ -1,0 +1,22 @@
+#!/bin/bash                           
+# Which account to be charged cpu time
+#$ -A UTMDACC-DIP                     
+#  combine stdout stderr              
+#$ -j y                               
+#  jobname                            
+#$ -N deltap                              
+#  inherit submission env             
+#$ -V                                 
+# The job is located in the current   
+# working directory.                  
+#$ -cwd                             
+
+#$ -o $JOB_NAME.o$JOB_ID            
+#$ -q development        
+#$ -pe 8way 48
+#$ -l h_rt=01:00:00                 
+#$ -M cjmaclellan@mdanderson.org
+#$ -m be 
+set -x                              
+echo $PE_HOSTFILE |xargs cat
+dakota dakota_hopspack.in 
