@@ -3,10 +3,10 @@
 # Each DAKOTA test file is capable of running multiple tests. The
 # manual process for doing this is to add or uncomment specific lines
 # needed for a test and comment out other lines which are not needed
-# for that specific test.  Within the automatic test script, a special
+# for that specific test. Within the automatic test script, a special
 # syntax is used to automatically determine which lines are to be used
 # for a specific test. A #n (0 - 9) is used to associate lines in the
-# test file with a specific test.  The #0 is used to designate lines
+# test file with a specific test. The #0 is used to designate lines
 # which are to be run as part of the baseline test but not part of the
 # other tests. To add multiple tests to a file add the #n to the
 # trailing comment of a line, the dakota_test script will parse
@@ -15,60 +15,30 @@
 # can be included in multiple tests by adding multiple #n designaters
 # seperated by a comma.
 
-# Tests:  asynch_pattern_search
+# Tests: asynch_pattern_search
 # This set of tests was arrived at by creating an orthogonal array
 # across the algorithm and execution parameters and then modifying it
 # to eliminate unsupported combinations.
-# 0-21  :  serial tests
-# p0-p21:  parallel tests
+# 0-21 : serial tests
+# p0-p21: parallel tests
 
 # Processor specification for automated parallel tests:
 # p0=2, p1=2, p2=2, p3=2, p4=2, p5=2, p6=2, p7=2, p8=2, p9=2, p10=2, p11=2, p12=2, p13=2, p14=2, p15=2, p16=2, p17=2, p18=2, p19=2, p20=2, p21=2
 
 strategy,
-	single_method
-	  method_pointer = 'PARAM'
-	  graphics,tabular_graphics_data
+        ##method independent controls
+        graphics
+        tabular_graphics_data
+        #tabular_graphics_file
+        #output_precision
+        #iterator servers
+        #iterator_self_scheduling
+        #iterator_static_scheduling
+        ##define strategy
+        single_method
 
-###########################
-#  begin parameter study  #
-###########################
 method,
-	id_method = 'PARAM'
-	model_pointer = 'PARAM_M'
-	multidim_parameter_study		
-	  output verbose
-	  partitions = 2
-
-model,
-	id_model = 'PARAM_M'
-	nested
-	  variables_pointer  = 'PARAM_V'
-	  sub_method_pointer = 'OPT'
-	  responses_pointer  = 'PARAM_R'
-#	  primary_variable_mapping   = 'angle' 'diameter' 'distance'
-#	  secondary_variable_mapping = 'angle' 'diameter' 'distance'
-          primary_response_mapping   = 1. 
-#         secondary_response_mapping = 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
-
-variables,
-	id_variables = 'PARAM_V'
-	discrete_state_set_int= 1
-	  num_set_values       3
-	  set_values          0 30 60
-	  descriptors    'nzero' 
-
-responses,
-	id_responses = 'PARAM_R'
-	num_objective_functions = 1             
-	no_gradients				
-	no_hessians
-##########################
-# begin opt specification#
-##########################
-method,
-	id_method = 'OPT'
-	model_pointer = 'OPT_M'
+        ##method independent controls
         output verbose
         #max_iterations
         #max_function_evaluations
@@ -94,71 +64,57 @@ method,
         synchronization blocking
         exploratory_moves basic_pattern
 
-model,
-	id_model = 'OPT_M'
-	single
-	  variables_pointer = 'OPT_V'
-	  interface_pointer = 'OPT_I'
-	  responses_pointer = 'OPT_R'
-
 variables,
-	id_variables = 'OPT_V'
-	discrete_state_set_int= 1
-	  num_set_values       3
-	  set_values         0 30 60 
-	  descriptors    'nzero' 
-	continuous_design = 1
+continuous_design = 2
 # For 67_11
-         # initial_point	2.0 .1 .63  95 .5 .63 0.9 0.003
+         # initial_point 2.0 .1 .63 95 .5 .63 0.9 0.003
 #For 67_10
-        # initial_point 2.0 .1 .63  50 .05 .63 0.9 0.0095  
+        # initial_point 2.0 .1 .63 50 .05 .63 0.9 0.0095
 #For 335_11
-         #initial_point 2.0 .1 .63  80 .25 .63 0.9 0.008
+         #initial_point 2.0 .1 .63 80 .25 .63 0.9 0.008
 #ForNS
-         initial_point 97.74
+         initial_point 100 100
 #ForNR
-#         initial_point 2.0 .1 .63  149 .795 .63 0.9 -0.002
+# initial_point 2.0 .1 .63 149 .795 .63 0.9 -0.002
 
-#	  scales		5.0   1.5   2.0		#1,#3,#5,#8,#10,#11,#12
-#  descriptors	'x1'  'x2'  'x3'
+# scales 5.0 1.5 2.0 #1,#3,#5,#8,#10,#11,#12
+# descriptors 'x1' 'x2' 'x3'
 # For 67_11
-      	 # lower_bounds      =  1.  0.08  .55   60.  0.499 .55 .85 0.00275
-	 # upper_bounds      =  5. 0.12   .65   250. 0.501  .65 .99 0.00325
+       # lower_bounds = 1. 0.08 .55 60. 0.499 .55 .85 0.00275
+# upper_bounds = 5. 0.12 .65 250. 0.501 .65 .99 0.00325
 #For 67_10
-        #  lower_bounds      =  1.  0.08  .55   1.  0.0499 .55 .85 0.009
-        #  upper_bounds      =  5. 0.12   .65   12. 0.0501  .65 .99 0.01
+        # lower_bounds = 1. 0.08 .55 1. 0.0499 .55 .85 0.009
+        # upper_bounds = 5. 0.12 .65 12. 0.0501 .65 .99 0.01
 #For 335_11
-        #  lower_bounds      =  1.  0.08  .55   1.  0.24999 .55 .85 0.0075
-        #  upper_bounds      =  5. 0.12   .65   100. 0.25001  .65 .99 0.0085
+        # lower_bounds = 1. 0.08 .55 1. 0.24999 .55 .85 0.0075
+        # upper_bounds = 5. 0.12 .65 100. 0.25001 .65 .99 0.0085
 #For NR
-        #  lower_bounds      =  1.  0.08  .6299999   60.  0.79499 .6299999 .8999 -0.002001
-        #  upper_bounds      =  5. 0.12   .6300001   250. 0.79501 .6300001 .9001 -0.001999
+        # lower_bounds = 1. 0.08 .6299999 60. 0.79499 .6299999 .8999 -0.002001
+        # upper_bounds = 5. 0.12 .6300001 250. 0.79501 .6300001 .9001 -0.001999
 #For NS
-          lower_bounds      =  57.  
-          upper_bounds      =  163. 
-	  descriptors       =  'mu_a_tumor' 
+          lower_bounds = 50. 50
+          upper_bounds = 200. 200
+descriptors = 'mu_a_healthy' 'mu_s_healthy'
 
 interface,
-	id_interface = 'OPT_I'
-	fork					#1,#4,#5,#7,#8,#11,#16,#19
-          asynchronous			#0,#p0
-          #evaluation_concurrency 5	#3,#8,#18,#19
-          work_directory 
+fork #1,#4,#5,#7,#8,#11,#16,#19
+          asynchronous #0,#p0
+          #evaluation_concurrency 5 #3,#8,#18,#19
+          work_directory
           named = 'hopspack'
-	  file_save file_tag
-	  analysis_driver = '/data/fuentes/mdacc/deltap_phantom_oct10/test_dakota_driver'
-	  #analysis_driver = '/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/ibrun_par_driver'
-	  #analysis_driver = '/share/work/fuentes/deltap_phantom_oct10/shamu_par_driver'
-	  parameters_file = 'hopspack.in'
-	  results_file = 'hopspack.out'
+file_save file_tag
+#analysis_driver = '/data/fuentes/mdacc/deltap_phantom_oct10/mpich2_par_driver'
+analysis_driver = '/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/ibrun_par_driver'
+#analysis_driver = '/share/work/fuentes/deltap_phantom_oct10/shamu_par_driver'
+parameters_file = 'hopspack.in'
+results_file = 'hopspack.out'
 
 responses,
-	id_responses = 'OPT_R'
-	num_objective_functions = 1
-#	num_nonlinear_equality_constraints = 1		  #1,#3,#4,#5,#6
-#		nonlinear_equality_targets = -.2	  #1,#3,#4,#5,#6
-#	num_nonlinear_inequality_constraints = 2	  #4,#5,#7,#13,#14,#15
-#	nonlinear_inequality_lower_bounds = 0.0 0.0	  #22
-#	nonlinear_inequality_upper_bounds = 1.e+50 1.e+50 #22
-	no_gradients
-	no_hessians
+num_objective_functions = 1
+# num_nonlinear_equality_constraints = 1 #1,#3,#4,#5,#6
+# nonlinear_equality_targets = -.2 #1,#3,#4,#5,#6
+# num_nonlinear_inequality_constraints = 2 #4,#5,#7,#13,#14,#15
+# nonlinear_inequality_lower_bounds = 0.0 0.0 #22
+# nonlinear_inequality_upper_bounds = 1.e+50 1.e+50 #22
+no_gradients
+no_hessians

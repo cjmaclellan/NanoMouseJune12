@@ -42,12 +42,12 @@ def deltapModeling(**kwargs):
   
   # store control variables
   getpot = femLibrary.PylibMeshGetPot(PetscOptions) 
-  # from Duck table 2.15
-  getpot.SetIniValue( "material/specific_heat","3840.0" ) 
+  # from Duck table 2.11 pig dermis 
+  getpot.SetIniValue( "material/specific_heat","3280.0" ) 
   # set ambient temperature 
   getpot.SetIniValue( "initial_condition/u_init","0.0" ) 
-  # from Duck
-  getpot.SetIniValue( "thermal_conductivity/k_0_healthy",kwargs['cv']['k_0_healthy'] ) 
+  # from Duck 2.7 Rat tumor measured in vivo
+  getpot.SetIniValue( "thermal_conductivity/k_0_healthy","0.32" ) 
   getpot.SetIniValue( "thermal_conductivity/k_0_tumor",kwargs['cv']['k_0_healthy'] ) 
   # water properties at http://www.d-a-instruments.com/light_absorption.html
   getpot.SetIniValue( "optical/mu_a_healthy", kwargs['cv']['mu_a_healthy'] ) 
@@ -60,7 +60,7 @@ def deltapModeling(**kwargs):
   #For SPIOs
   #getpot.SetIniValue( "optical/guass_radius","0.0035" ) 
   #For NR/NS
-  getpot.SetIniValue( "optical/guass_radius",".0025" )
+  getpot.SetIniValue( "optical/guass_radius",".003" )
 
   # 1-300
   getpot.SetIniValue( "optical/mu_a_tumor",
@@ -100,9 +100,9 @@ def deltapModeling(**kwargs):
   # For NR		
   #laserTip         =  [0.,.0002,.035]
   # For NS
-  laserTip         =  [0.,.001,.035]
+  laserTip         =  [0.00001,.000001,.000001]
 
-  laserOrientation =  [0.,0.,-1.0 ] 
+  laserOrientation =  [0.,0.,-1.0] 
   
   import vtk
   import vtk.util.numpy_support as vtkNumPy 
@@ -114,43 +114,13 @@ def deltapModeling(**kwargs):
   # FIXME  Translate -> RotateZ -> RotateY -> RotateX -> Scale seems to be the order of paraview
   AffineTransform = vtk.vtkTransform()
   # should be in meters
-  # For 67_11
-  #AffineTransform.Translate([ kwargs['cv']['x_translate'],
-  #                            0.0375,0.0033])
-  #AffineTransform.RotateZ( 0.0 ) 
-  #AffineTransform.RotateY(-90.0 )
-  #AffineTransform.RotateX(  2.0 )
-
-  # For 67_10
-  #AffineTransform.Translate([ kwargs['cv']['x_translate'],
-  #                            0.03025,0.0033])
-  #AffineTransform.RotateZ( 0.0 )
-  #AffineTransform.RotateY(-90.0 )
-  #AffineTransform.RotateX(  1.0 )
-  #AffineTransform.Scale([1.,1.,1.])
-
-  # For 335_11
-  #AffineTransform.Translate([ kwargs['cv']['x_translate'],
-  #                            0.0333,0.0033])
-  #AffineTransform.RotateZ( 0.0 )
-  #AffineTransform.RotateY(-90.0 )
-  #AffineTransform.RotateX(  3.0 )
-  #AffineTransform.Scale([1.,1.,1.])
-
-  # For NR
-  #AffineTransform.Translate([ kwargs['cv']['x_translate'],
-  #                            0.00570,-0.0001])
-  #AffineTransform.RotateZ( 0.0 )
-  #AffineTransform.RotateY(-90.0 )
-  #AffineTransform.RotateX(  2.0 )
-  #AffineTransform.Scale([1.,1.,1.])
 
   # For NS
-  AffineTransform.Translate([ kwargs['cv']['x_translate'],
-                              0.00675,-0.0001])
+  #AffineTransform.Translate([ .01320,-.0037,0.00000010])
+  AffineTransform.Translate([ .005,-.0035,0.0])
   AffineTransform.RotateZ( 0.0 )
-  AffineTransform.RotateY(-90.0 )
-  AffineTransform.RotateX(  0.0 )
+  AffineTransform.RotateY( -90.0 )
+  AffineTransform.RotateX( 0.0 )
   AffineTransform.Scale([1.,1.,1.])
 
 
@@ -160,7 +130,7 @@ def deltapModeling(**kwargs):
   #               0 | 1
   #   
   matrix = AffineTransform.GetConcatenatedTransform(0).GetMatrix()
-#print matrix 
+  #print matrix 
   RotationMatrix = [[matrix.GetElement(0,0),matrix.GetElement(0,1),matrix.GetElement(0,2)],
                     [matrix.GetElement(1,0),matrix.GetElement(1,1),matrix.GetElement(1,2)],
                     [matrix.GetElement(2,0),matrix.GetElement(2,1),matrix.GetElement(2,2)]]
@@ -185,9 +155,12 @@ def deltapModeling(**kwargs):
   #For SPIOs
   #femMesh.SetupUnStructuredGrid( "/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/phantomMeshFullTess.e",0,RotationMatrix, Translation  ) 
   #For NS/NR
-  meshFile = "../phantomMeshFull.e"
-  meshFile = "../phantomMesh.e"
-  femMesh.SetupUnStructuredGrid( meshFile ,0,RotationMatrix, Translation  )
+  RotationMatrix = [[1,0,0],
+                    [0,1,0],
+                    [0,0,1]]
+  Translation =     [.0000001,.00000001,.000001]
+  #
+  femMesh.SetupUnStructuredGrid( "sphereMesh.e",0,RotationMatrix, Translation  )
   #femMesh.SetupUnStructuredGrid( "phantomMesh.e",0,RotationMatrix, Translation  )
 
   MeshOutputFile = "fem_data.%04d.e" % kwargs['fileID'] 
@@ -199,14 +172,14 @@ def deltapModeling(**kwargs):
   #for SPIOs
   #acquisitionTime = 4.9305
   #for NS/NR
-  acquisitionTime = 5.053
+  acquisitionTime = 5.09
   deltat = acquisitionTime / nsubstep
   ntime  = 60 
   eqnSystems =  femLibrary.PylibMeshEquationSystems(femMesh,getpot)
   #For SPIOs
   #getpot.SetIniPower(nsubstep,  [ [1,6,30,ntime],[1.0,0.0,4.5,0.0] ])
   #For NS/NR
-  getpot.SetIniPower(nsubstep,  [ [1,6,42,ntime],[1.0,0.0,1.0,0.0] ])
+  getpot.SetIniPower(nsubstep,  [ [1,7,41,ntime],[1.0,0.0,1.13,0.0] ])
   deltapSystem = eqnSystems.AddPennesDeltaPSystem("StateSystem",deltat) 
   deltapSystem.AddStorageVectors(ntime)
 
@@ -223,6 +196,10 @@ def deltapModeling(**kwargs):
   # print info
   eqnSystems.PrintSelf() 
   
+  # write IC
+  exodusII_IO = femLibrary.PylibMeshExodusII_IO(femMesh)
+  exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, 1, 0.0 )  
+  
   # read imaging data geometry that will be used to project FEM data onto
   #For 67_11
   #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/spio/spioVTK/67_11/tmap_67_11.0000.vtk')
@@ -233,44 +210,24 @@ def deltapModeling(**kwargs):
   #For NS
   #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.0000.vtk') 
   #For NR
-  #imageFileNameTemplate = '/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.%04d.vtk'
+  imageFileNameTemplate = '/FUS4/data2/CJM/SPIO_mice/matlab_VTK/spio_2_tmap.%04d.vtk'
   #imageFileNameTemplate = "/share/work/fuentes/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
-  imageFileNameTemplate = "../nrtmapsVTK/S695/S695.%04d.vtk"
+  #imageFileNameTemplate = "/data/fuentes/mdacc/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
 
-
-  # get initial imaging data
-  nzero = kwargs['cv']['nzero']
   #vtkReader = vtk.vtkXMLImageDataReader() 
   vtkReader = vtk.vtkDataSetReader() 
-  vtkReader.SetFileName( imageFileNameTemplate % nzero )
+  vtkReader.SetFileName( imageFileNameTemplate % 0 )
   vtkReader.Update()
   templateImage = vtkReader.GetOutput()
   dimensions = templateImage.GetDimensions()
   spacing = templateImage.GetSpacing()
   origin  = templateImage.GetOrigin()
   print spacing, origin, dimensions
-  # setup imaging
   femImaging = femLibrary.PytttkImaging(getpot, dimensions ,origin,spacing) 
-  # project onto fem 
-  imageCells = vtkReader.GetOutput().GetPointData() 
-  dataArray = vtkNumPy.vtk_to_numpy(imageCells.GetArray('scalars')) 
-  v1 = PETSc.Vec().createWithArray(dataArray, comm=PETSc.COMM_SELF)
-  femImaging.ProjectImagingToFEMMesh("MRTI",0.0,v1,eqnSystems)  
-  mrtiSystem.StoreSystemTimeStep(nzero ) 
-  # check if we want to project imaging onto FEM as the IC
-  if (nzero != 0):
-     mrtidata = mrtiSystem.GetSolutionVector() 
-     # write soln to disk for processing
-     eqnSystems.SetPetscFEMSystemSolnSubVector( "StateSystem",mrtidata,0)
-     eqnSystems.UpdatePetscFEMSystemTimeStep("StateSystem",nzero) 
-
-  # write IC
-  exodusII_IO = femLibrary.PylibMeshExodusII_IO(femMesh)
-  exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, 1, 0.0 )  
   
-  # loop over time steps and solve
   ObjectiveFunction = 0.0
-  for timeID in range(nzero+1,ntime*nsubstep):
+  # loop over time steps and solve
+  for timeID in range(1,ntime*nsubstep):
   #for timeID in range(1,10):
      # project imaging onto fem mesh
      vtkImageReader = vtk.vtkDataSetReader() 
@@ -288,10 +245,10 @@ def deltapModeling(**kwargs):
      image_mask = data_array.copy().reshape(dimensions,order='F')
      # Set all image pixels to large value
      largeValue = 1.e6
-     image_mask[:,:] = largeValue 
+     image_mask[:,:] = 1 
      # RMS error will be computed within this ROI/VOI imagemask[xcoords/column,ycoords/row]
      #image_mask[93:153,52:112] = 1.0
-     image_mask[98:158,46:106] = 1.0
+     #image_mask[98:158,46:106] = 1.0
      v2 = PETSc.Vec().createWithArray(image_mask, comm=PETSc.COMM_SELF)
      femImaging.ProjectImagingToFEMMesh("ImageMask",largeValue,v2,eqnSystems)  
      #print mrti_array
@@ -312,7 +269,7 @@ def deltapModeling(**kwargs):
      ObjectiveFunction =( ObjectiveFunction + qoi) 
     
      # control write output
-     writeControl = False
+     writeControl = True
      if ( timeID%nsubstep == 0 and writeControl ):
        # write exodus file
        exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, timeID+1, timeID*deltat )  
@@ -338,13 +295,13 @@ def deltapModeling(**kwargs):
          #print fem_array 
          #print type(fem_array )
        # only rank 0 should write
-       if ( petscRank == 0 ):
-          print "writing ", timeID
-          vtkTemperatureWriter = vtk.vtkDataSetWriter()
-          vtkTemperatureWriter.SetFileTypeToBinary()
-          vtkTemperatureWriter.SetFileName("invspio_67_11.%04d.vtk" % timeID )
-          vtkTemperatureWriter.SetInput(vtkResample.GetOutput())
-          vtkTemperatureWriter.Update()
+       #if ( petscRank == 0 ):
+       #   print "writing ", timeID
+       #   vtkTemperatureWriter = vtk.vtkDataSetWriter()
+       #   vtkTemperatureWriter.SetFileTypeToBinary()
+       #   vtkTemperatureWriter.SetFileName("invspio_67_11.%04d.vtk" % timeID )
+       #   vtkTemperatureWriter.SetInput(vtkResample.GetOutput())
+       #   vtkTemperatureWriter.Update()
   print 'Objective Fn'
   print ObjectiveFunction
   retval = dict([])
@@ -409,9 +366,8 @@ elif ('DAKOTA_FNS' in paramsdict):
 continuous_vars = { 
                     'k_0_healthy' :'.63' ,
                     'k_0_tumor'   :'.63' ,
-                    'mu_a_healthy':'2',
-                    'mu_a_tumor'  :paramsdict['mu_a_tumor'  ],
-                    'nzero'       :int(paramsdict['nzero'  ])
+                    'mu_a_healthy':paramsdict['mu_a_healthy'  ],
+                    'mu_a_tumor'  :'1.0'   
                   }
 
 try:
@@ -434,7 +390,7 @@ except KeyError:
    od_healthy   = float('.105')
    od_tumor     = float('.707')
    mu_a_healthy = float('2')
-   mu_a_tumor   = float(paramsdict['mu_a_tumor'  ])
+   mu_a_tumor   = float('2')
    #Mutr=ln(10)*OD/.01  #  .01 --> in meters  
    #mu_s = (mutr-mua)/(1-g)
    mu_tr_healthy= math.log(10) * od_healthy / 0.01
@@ -443,7 +399,7 @@ except KeyError:
    continuous_vars['mu_s_tumor'  ] = "%f" % ((mu_tr_tumor  -mu_a_tumor  )/(1.0-anfact))
 
 try:
-   continuous_vars['x_translate'] = float( '-.0052' )
+   continuous_vars['x_translate'] = float( '0.0000001' )
 except KeyError:
    continuous_vars['x_translate'] = -0.0055
 
