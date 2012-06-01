@@ -211,7 +211,7 @@ def deltapModeling(**kwargs):
   #For NS
   #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.0000.vtk') 
   #For NR
-  imageFileNameTemplate = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/matlab_VTK/control_1_tmap.%04d.vtk'
+  imageFileNameTemplate = '/FUS4/data2/CJM/SPIO_mice/matlab_VTK/control_1_tmap.%04d.vtk'
   #imageFileNameTemplate = "/share/work/fuentes/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
   #imageFileNameTemplate = "/data/fuentes/mdacc/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
 
