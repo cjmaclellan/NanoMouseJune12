@@ -47,7 +47,7 @@ def deltapModeling(**kwargs):
   # set ambient temperature 
   getpot.SetIniValue( "initial_condition/u_init","0.0" ) 
   # from Duck 2.7 Rat tumor measured in vivo
-  getpot.SetIniValue( "thermal_conductivity/k_0_healthy","0.32" ) 
+  getpot.SetIniValue( "thermal_conductivity/k_0_healthy",kwargs['cv']['k_0_healthy'] ) 
   getpot.SetIniValue( "thermal_conductivity/k_0_tumor",kwargs['cv']['k_0_healthy'] ) 
   # water properties at http://www.d-a-instruments.com/light_absorption.html
   getpot.SetIniValue( "optical/mu_a_healthy", kwargs['cv']['mu_a_healthy'] ) 
@@ -102,7 +102,7 @@ def deltapModeling(**kwargs):
   # For NS
   laserTip         =  [0.00001,.000001,.000001]
 
-  laserOrientation =  [0.,0.,-1.0] 
+  laserOrientation =  [0.0,0.,-1.0] 
   
   import vtk
   import vtk.util.numpy_support as vtkNumPy 
@@ -117,7 +117,8 @@ def deltapModeling(**kwargs):
 
   # For NS
   #AffineTransform.Translate([ .01320,-.0037,0.00000010])
-  AffineTransform.Translate([ .005,-.0035,0.0])
+  #AffineTransform.Translate([ .005,-.0035,0.0])
+  AffineTransform.Translate([-.002,-.0022,0.0])
   AffineTransform.RotateZ( 0.0 )
   AffineTransform.RotateY( -90.0 )
   AffineTransform.RotateX( 0.0 )
@@ -160,7 +161,7 @@ def deltapModeling(**kwargs):
                     [0,0,1]]
   Translation =     [.0000001,.00000001,.000001]
   #
-  femMesh.SetupUnStructuredGrid( "sphereMesh.e",0,RotationMatrix, Translation  )
+  femMesh.SetupUnStructuredGrid( "/work/01741/cmaclell/data/mdacc/NanoMouseJune12/sphereMesh.e",0,RotationMatrix, Translation  )
   #femMesh.SetupUnStructuredGrid( "phantomMesh.e",0,RotationMatrix, Translation  )
 
   MeshOutputFile = "fem_data.%04d.e" % kwargs['fileID'] 
@@ -179,7 +180,7 @@ def deltapModeling(**kwargs):
   #For SPIOs
   #getpot.SetIniPower(nsubstep,  [ [1,6,30,ntime],[1.0,0.0,4.5,0.0] ])
   #For NS/NR
-  getpot.SetIniPower(nsubstep,  [ [1,7,41,ntime],[1.0,0.0,1.13,0.0] ])
+  getpot.SetIniPower(nsubstep,  [ [1,6,42,ntime],[1.0,0.0,1.13,0.0] ])
   deltapSystem = eqnSystems.AddPennesDeltaPSystem("StateSystem",deltat) 
   deltapSystem.AddStorageVectors(ntime)
 
@@ -210,7 +211,7 @@ def deltapModeling(**kwargs):
   #For NS
   #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.0000.vtk') 
   #For NR
-  imageFileNameTemplate = '/FUS4/data2/CJM/SPIO_mice/matlab_VTK/spio_2_tmap.%04d.vtk'
+  imageFileNameTemplate = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/matlab_VTK/control_1_tmap.%04d.vtk'
   #imageFileNameTemplate = "/share/work/fuentes/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
   #imageFileNameTemplate = "/data/fuentes/mdacc/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
 
@@ -269,7 +270,7 @@ def deltapModeling(**kwargs):
      ObjectiveFunction =( ObjectiveFunction + qoi) 
     
      # control write output
-     writeControl = True
+     writeControl = False
      if ( timeID%nsubstep == 0 and writeControl ):
        # write exodus file
        exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, timeID+1, timeID*deltat )  
@@ -386,17 +387,19 @@ try:
    continuous_vars['mu_s_healthy'] = paramsdict['mu_s_healthy']
    continuous_vars['mu_s_tumor'  ] = paramsdict['mu_s_tumor'  ]
 except KeyError:
-   anfact       = float(continuous_vars['anfact'] )
-   od_healthy   = float('.105')
-   od_tumor     = float('.707')
-   mu_a_healthy = float('2')
-   mu_a_tumor   = float('2')
+   #anfact       = float(continuous_vars['anfact'] )
+   mu_s_healthy=float('31000')
+   mu_s_tumor=float('31000')
+   #od_healthy   = float('.105')
+   #od_tumor     = float('.707')
+   #mu_a_healthy = float('2')
+   #mu_a_tumor   = float('2')
    #Mutr=ln(10)*OD/.01  #  .01 --> in meters  
    #mu_s = (mutr-mua)/(1-g)
-   mu_tr_healthy= math.log(10) * od_healthy / 0.01
-   mu_tr_tumor  = math.log(10) * od_tumor   / 0.01
-   continuous_vars['mu_s_healthy'] = "%f" % ((mu_tr_healthy-mu_a_healthy)/(1.0-anfact))
-   continuous_vars['mu_s_tumor'  ] = "%f" % ((mu_tr_tumor  -mu_a_tumor  )/(1.0-anfact))
+   #mu_tr_healthy= math.log(10) * od_healthy / 0.01
+   #mu_tr_tumor  = math.log(10) * od_tumor   / 0.01
+   #continuous_vars['mu_s_healthy'] = "%f" % ((mu_tr_healthy-mu_a_healthy)/(1.0-anfact))
+   #continuous_vars['mu_s_tumor'  ] = "%f" % ((mu_tr_tumor  -mu_a_tumor  )/(1.0-anfact))
 
 try:
    continuous_vars['x_translate'] = float( '0.0000001' )
