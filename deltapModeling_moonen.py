@@ -47,8 +47,8 @@ def deltapModeling(**kwargs):
   # set ambient temperature 
   getpot.SetIniValue( "initial_condition/u_init","0.0" ) 
   # from Duck 2.7 Rat tumor measured in vivo
-  getpot.SetIniValue( "thermal_conductivity/k_0_healthy",kwargs['cv']['k_0_healthy'] ) 
-  getpot.SetIniValue( "thermal_conductivity/k_0_tumor",kwargs['cv']['k_0_healthy'] ) 
+  getpot.SetIniValue( "thermal_conductivity/k_0_healthy", kwargs['cv']['k_0_healthy'] ) 
+  getpot.SetIniValue( "thermal_conductivity/k_0_tumor", kwargs['cv']['k_0_tumor'] ) 
   # water properties at http://www.d-a-instruments.com/light_absorption.html
   getpot.SetIniValue( "optical/mu_a_healthy", kwargs['cv']['mu_a_healthy'] ) 
   # FIXME large mu_s (> 30) in agar causing negative fluence to satisfy BC 
@@ -161,7 +161,7 @@ def deltapModeling(**kwargs):
                     [0,0,1]]
   Translation =     [.0000001,.00000001,.000001]
   #
-  femMesh.SetupUnStructuredGrid( "/work/01741/cmaclell/data/mdacc/NanoMouseJune12/sphereMesh.e",0,RotationMatrix, Translation  )
+  femMesh.SetupUnStructuredGrid( "/data/cjmaclellan/mdacc/NanoMouseJune12/sphereMesh.e",0,RotationMatrix, Translation  )
   #femMesh.SetupUnStructuredGrid( "phantomMesh.e",0,RotationMatrix, Translation  )
 
   MeshOutputFile = "fem_data.%04d.e" % kwargs['fileID'] 
@@ -270,7 +270,7 @@ def deltapModeling(**kwargs):
      ObjectiveFunction =( ObjectiveFunction + qoi) 
     
      # control write output
-     writeControl = False
+     writeControl = True
      if ( timeID%nsubstep == 0 and writeControl ):
        # write exodus file
        exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, timeID+1, timeID*deltat )  
@@ -365,7 +365,7 @@ elif ('DAKOTA_FNS' in paramsdict):
 # set up the data structures the rosenbrock analysis code expects
 # for this simple example, put all the variables into a single hardwired array
 continuous_vars = { 
-                    'k_0_healthy' :'.63' ,
+                    'k_0_healthy' :paramsdict['k_0_healthy'  ],
                     'k_0_tumor'   :'.63' ,
                     'mu_a_healthy':paramsdict['mu_a_healthy'  ],
                     'mu_a_tumor'  :'1.0'   
@@ -388,8 +388,8 @@ try:
    continuous_vars['mu_s_tumor'  ] = paramsdict['mu_s_tumor'  ]
 except KeyError:
    #anfact       = float(continuous_vars['anfact'] )
-   mu_s_healthy=float('31000')
-   mu_s_tumor=float('31000')
+   #mu_s_healthy  = float('31000')
+   #mu_s_tumor    = float('31000')
    #od_healthy   = float('.105')
    #od_tumor     = float('.707')
    #mu_a_healthy = float('2')
@@ -398,6 +398,8 @@ except KeyError:
    #mu_s = (mutr-mua)/(1-g)
    #mu_tr_healthy= math.log(10) * od_healthy / 0.01
    #mu_tr_tumor  = math.log(10) * od_tumor   / 0.01
+   continuous_vars['mu_s_healthy'] = "31000"
+   continuous_vars['mu_s_tumor'] = "31000"
    #continuous_vars['mu_s_healthy'] = "%f" % ((mu_tr_healthy-mu_a_healthy)/(1.0-anfact))
    #continuous_vars['mu_s_tumor'  ] = "%f" % ((mu_tr_tumor  -mu_a_tumor  )/(1.0-anfact))
 
