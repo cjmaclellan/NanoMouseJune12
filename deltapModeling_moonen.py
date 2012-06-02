@@ -124,6 +124,12 @@ def deltapModeling(**kwargs):
   AffineTransform.RotateX( 0.0 )
   AffineTransform.Scale([1.,1.,1.])
 
+  #AffineTransform.Translate([0.00001,0.00001,0.000001])
+  #AffineTransform.RotateZ( 0.0 )
+  #AffineTransform.RotateY( 0.0 )
+  #AffineTransform.RotateX( 0.0 )
+  #AffineTransform.Scale([1.,1.,1.])
+
 
   # get homogenius 4x4 matrix  of the form
   #               A | b

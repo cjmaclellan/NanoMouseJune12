@@ -50,8 +50,8 @@ method,
         ##method dependent controls (randomization, delta, constraint)
         #stochastic
         #seed
-        initial_delta = 20
-        threshold_delta = .05
+        initial_delta = 50 .05
+        threshold_delta = .05 .01
         #constraint_penalty
         #constant_penalty
         ##method dependent controls (pattern controls)
@@ -73,7 +73,7 @@ continuous_design = 2
 #For 335_11
          #initial_point 2.0 .1 .63 80 .25 .63 0.9 0.008
 #ForNS
-         initial_point 100 100
+         initial_point 25 .4
 #ForNR
 # initial_point 2.0 .1 .63 149 .795 .63 0.9 -0.002
 
@@ -92,9 +92,9 @@ continuous_design = 2
         # lower_bounds = 1. 0.08 .6299999 60. 0.79499 .6299999 .8999 -0.002001
         # upper_bounds = 5. 0.12 .6300001 250. 0.79501 .6300001 .9001 -0.001999
 #For NS
-          lower_bounds = 50. 50
-          upper_bounds = 200. 200
-descriptors = 'mu_a_healthy' 'mu_s_healthy'
+          lower_bounds = 10. .1
+          upper_bounds = 500. 1.5
+descriptors = 'mu_a_healthy' 'k_0_healthy'
 
 interface,
 fork #1,#4,#5,#7,#8,#11,#16,#19
@@ -104,7 +104,7 @@ fork #1,#4,#5,#7,#8,#11,#16,#19
           named = 'hopspack'
 file_save file_tag
 #analysis_driver = '/data/fuentes/mdacc/deltap_phantom_oct10/mpich2_par_driver'
-analysis_driver = '/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/ibrun_par_driver'
+analysis_driver = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/ibrun_par_driver'
 #analysis_driver = '/share/work/fuentes/deltap_phantom_oct10/shamu_par_driver'
 parameters_file = 'hopspack.in'
 results_file = 'hopspack.out'

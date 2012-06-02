@@ -13,10 +13,10 @@
 
 #$ -o $JOB_NAME.o$JOB_ID            
 #$ -q development        
-#$ -pe 8way 48
-#$ -l h_rt=01:00:00                 
+#$ -pe 8way 80
+#$ -l h_rt=02:00:00                 
 #$ -M cjmaclellan@mdanderson.org
 #$ -m be 
 set -x                              
 echo $PE_HOSTFILE |xargs cat
-dakota dakota_hopspack.in 
+dakota /work/01741/cmaclell/data/mdacc/NanoMouseJune12/dakota_hopspack.in 
