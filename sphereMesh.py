@@ -48,11 +48,11 @@ def SphereMesh(sphereRadius):
   # scale from [mm] to [m] and write'
   cubit.cmd('volume all scale 0.001')
   #rotate mesh to align with imaging data
-  #cubit.cmd('volume all rotate 0 about x')
-  #cubit.cmd('volume all rotate -90 about y')
-  #cubit.cmd('volume all rotate -45 about z')
+  cubit.cmd('volume all rotate 0 about x')
+  cubit.cmd('volume all rotate -90 about y')
+  cubit.cmd('volume all rotate 0 about z')
   #translate mesh to align with imaging data
-  #cubit.cmd('volume all move X .01320 Y -.0037 Z 0')
+  cubit.cmd('volume all move X -.002 Y -.0022 Z 0')
   cubit.cmd('export mesh "sphereMesh.e" overwrite' )
 # end def SphereMesh
 ##################################################################
@@ -130,7 +130,7 @@ def ParseDakotaFile(param_file):
 #params = ParseDakotaFile("/data/fuentes/utsa/vasculature_july10/vessel/realization.1/pce.in")
 #vessel_distance = float(params['cv']['vessel_distance'])
 #vessel_diameter = float(params['cv']['vessel_diameter'])
-radiusList = [4.6] #mm
+radiusList = [4.0] #mm
 
 for radius in radiusList:
     SphereMesh(radius) 
