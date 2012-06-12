@@ -62,6 +62,10 @@ def deltapModeling(**kwargs):
   #For NR/NS
   getpot.SetIniValue( "optical/guass_radius",".003" )
 
+  # cauchy BC
+  getpot.SetIniValue( "bc/u_infty","0.0" )
+  getpot.SetIniValue( "bc/newton_coeff","1.0e5" )
+
   # 1-300
   getpot.SetIniValue( "optical/mu_a_tumor",
               kwargs['cv']['mu_a_tumor'] ) 
@@ -118,7 +122,7 @@ def deltapModeling(**kwargs):
   # For NS
   #AffineTransform.Translate([ .01320,-.0037,0.00000010])
   #AffineTransform.Translate([ .005,-.0035,0.0])
-  AffineTransform.Translate([-.002,-.0022,0.0])
+  AffineTransform.Translate([-.006,-.0022,0.0])
   AffineTransform.RotateZ( 0.0 )
   AffineTransform.RotateY( -90.0 )
   AffineTransform.RotateX( 0.0 )
@@ -161,7 +165,7 @@ def deltapModeling(**kwargs):
                     [0,0,1]]
   Translation =     [.0000001,.00000001,.000001]
   #
-  femMesh.SetupUnStructuredGrid( "/work/01741/cmaclell/data/mdacc/NanoMouseJune12/sphereMesh.e",0,RotationMatrix, Translation  )
+  femMesh.SetupUnStructuredGrid( "./sphereMesh.e",0,RotationMatrix, Translation  )
   #femMesh.SetupUnStructuredGrid( "phantomMesh.e",0,RotationMatrix, Translation  )
 
   MeshOutputFile = "fem_data.%04d.e" % kwargs['fileID'] 
@@ -212,6 +216,7 @@ def deltapModeling(**kwargs):
   #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.0000.vtk') 
   #For NR
   imageFileNameTemplate = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/matlab_VTK/control_1_tmap.%04d.vtk'
+  imageFileNameTemplate = '/FUS4/data2/CJM/SPIO_mice/matlab_VTK/control_1_tmap.%04d.vtk'
   #imageFileNameTemplate = "/share/work/fuentes/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
   #imageFileNameTemplate = "/data/fuentes/mdacc/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
 
@@ -390,7 +395,7 @@ except KeyError:
    #anfact       = float(continuous_vars['anfact'] )
    #od_healthy   = float('.105')
    #od_tumor     = float('.707')
-   mu_s = float('310')
+   mu_s = float('31000')
    #mu_a_tumor   = float('2')
    #Mutr=ln(10)*OD/.01  #  .01 --> in meters  
    #mu_s = (mutr-mua)/(1-g)

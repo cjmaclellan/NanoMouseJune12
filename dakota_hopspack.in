@@ -104,7 +104,7 @@ fork #1,#4,#5,#7,#8,#11,#16,#19
           named = 'hopspack'
 file_save file_tag
 #analysis_driver = '/data/fuentes/mdacc/deltap_phantom_oct10/mpich2_par_driver'
-analysis_driver = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/ibrun_par_driver'
+analysis_driver = '/data/fuentes/forks/NanoMouseJune12/ibrun_par_driver'
 #analysis_driver = '/share/work/fuentes/deltap_phantom_oct10/shamu_par_driver'
 parameters_file = 'hopspack.in'
 results_file = 'hopspack.out'

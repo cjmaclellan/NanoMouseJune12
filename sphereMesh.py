@@ -17,6 +17,7 @@ def SphereMesh(sphereRadius):
   print "id" ,idhealthy
   cubit.cmd('volume 1   copy reflect x ')
   cubit.cmd('volume all copy reflect y ')
+  cubit.cmd('volume all copy reflect z ')
   # imprint and merge
   cubit.cmd('imprint volume all ')
   cubit.cmd('merge   volume all ')
@@ -32,12 +33,12 @@ def SphereMesh(sphereRadius):
   
   # export in pieces
   cubit.cmd('reset genesis')
-  cubit.cmd('block 1 volume  1 2 3 4')
+  cubit.cmd('block 1 volume  1 2 3 4 5 6 7 8')
   cubit.cmd('block 1 name "mouseleg"  ')
   # add BC
   #cubit.cmd('skin volume all make sideset 2')
-  cubit.cmd('sideset 2 surface 2 6 10 14')
-  cubit.cmd('sideset 2 name "neumann" ')
+  cubit.cmd('sideset 3 surface 20 24 28 32')
+  cubit.cmd('sideset 3 name "cauchy" ')
   cubit.cmd('sideset 4 surface 4 8 12 16')
   cubit.cmd('sideset 4 name "fluence" ')
   #cubit.cmd('nodeset 1 volume 17 18 19')
