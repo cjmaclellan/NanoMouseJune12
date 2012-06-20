@@ -57,9 +57,6 @@ def deltapModeling(**kwargs):
   # from AE paper
   #http://scitation.aip.org/journals/doc/MPHYA6-ft/vol_36/iss_4/1351_1.html#F3
 
-  #For SPIOs
-  #getpot.SetIniValue( "optical/guass_radius","0.0035" ) 
-  #For NR/NS
   getpot.SetIniValue( "optical/guass_radius",".003" )
 
   # cauchy BC
@@ -72,15 +69,10 @@ def deltapModeling(**kwargs):
   # 1-300
   getpot.SetIniValue( "optical/mu_s_tumor",
               kwargs['cv']['mu_s_tumor'] ) 
-  #getpot.SetIniValue( "optical/mu_a_tumor","71.0" ) 
-  #getpot.SetIniValue( "optical/mu_s_tumor","89.0" ) 
   # .9  - .99
   getpot.SetIniValue( "optical/anfact",kwargs['cv']['anfact'] ) 
   #agar length
 
-  #for SPIOs
-  #getpot.SetIniValue( "optical/agar_length","0.0206" ) 
-  #for NR/NS
   getpot.SetIniValue( "optical/agar_length","0.023" )
 
   getpot.SetIniValue("optical/refractive_index","1.0")
@@ -95,14 +87,6 @@ def deltapModeling(**kwargs):
                     [0.,0.,1.]]
   Translation =     [0.,0.,0.]
   # original coordinate system laser input
-  # For SPIOs 67_11
-  #laserTip         =  [0.,-.000625,.035] 
-  # For SPIOs 67_10
-  #laserTip         =  [0.,-.0001562,.035]
-  # For SPIOs 335_11
-  #laserTip         =  [0.,-.0014062,.035]
-  # For NR		
-  #laserTip         =  [0.,.0002,.035]
   # For NS
   laserTip         =  [0.00001,.000001,.000001]
 
@@ -119,9 +103,6 @@ def deltapModeling(**kwargs):
   AffineTransform = vtk.vtkTransform()
   # should be in meters
 
-  # For NS
-  #AffineTransform.Translate([ .01320,-.0037,0.00000010])
-  #AffineTransform.Translate([ .005,-.0035,0.0])
   AffineTransform.Translate([-.006,-.0022,0.0])
   AffineTransform.RotateZ( 0.0 )
   AffineTransform.RotateY( -90.0 )
@@ -157,16 +138,12 @@ def deltapModeling(**kwargs):
   # initialize FEM Mesh
   femMesh = femLibrary.PylibMeshMesh()
   # must setup Ini File first
-  #For SPIOs
-  #femMesh.SetupUnStructuredGrid( "/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/phantomMeshFullTess.e",0,RotationMatrix, Translation  ) 
-  #For NS/NR
   RotationMatrix = [[1,0,0],
                     [0,1,0],
                     [0,0,1]]
   Translation =     [.0000001,.00000001,.000001]
   #
   femMesh.SetupUnStructuredGrid( "./sphereMesh.e",0,RotationMatrix, Translation  )
-  #femMesh.SetupUnStructuredGrid( "phantomMesh.e",0,RotationMatrix, Translation  )
 
   MeshOutputFile = "fem_data.%04d.e" % kwargs['fileID'] 
   #femMes.SetupStructuredGrid( (10,10,4) ,[0.0,1.0],[0.0,2.0],[0.0,1.0]) 
@@ -174,16 +151,10 @@ def deltapModeling(**kwargs):
   # add the data structures for the background system solve
   # set deltat, number of time steps, power profile, and add system
   nsubstep = 1
-  #for SPIOs
-  #acquisitionTime = 4.9305
-  #for NS/NR
   acquisitionTime = 5.09
   deltat = acquisitionTime / nsubstep
   ntime  = 60 
   eqnSystems =  femLibrary.PylibMeshEquationSystems(femMesh,getpot)
-  #For SPIOs
-  #getpot.SetIniPower(nsubstep,  [ [1,6,30,ntime],[1.0,0.0,4.5,0.0] ])
-  #For NS/NR
   getpot.SetIniPower(nsubstep,  [ [1,6,42,ntime],[1.0,0.0,1.13,0.0] ])
   deltapSystem = eqnSystems.AddPennesDeltaPSystem("StateSystem",deltat) 
   deltapSystem.AddStorageVectors(ntime)
@@ -206,19 +177,8 @@ def deltapModeling(**kwargs):
   exodusII_IO.WriteTimeStep(MeshOutputFile,eqnSystems, 1, 0.0 )  
   
   # read imaging data geometry that will be used to project FEM data onto
-  #For 67_11
-  #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/spio/spioVTK/67_11/tmap_67_11.0000.vtk')
-  #For 67_10
-  #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/spio/spioVTK/67_10/tmap_67_10.0000.vtk')
-  #For 335_11 
-  #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/spio/spioVTK/335_11/tmap_335_11.0000.vtk')
-  #For NS
-  #vtkReader.SetFileName('/work/01741/cmaclell/data/mdacc/deltap_phantom_oct10/nrtmapsVTK/S695/S695.0000.vtk') 
-  #For NR
   imageFileNameTemplate = '/work/01741/cmaclell/data/mdacc/NanoMouseJune12/matlab_VTK/control_1_tmap.%04d.vtk'
   imageFileNameTemplate = '/FUS4/data2/CJM/SPIO_mice/matlab_VTK/control_1_tmap.%04d.vtk'
-  #imageFileNameTemplate = "/share/work/fuentes/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
-  #imageFileNameTemplate = "/data/fuentes/mdacc/deltap_phantom_oct10/nrtmapsVTK/R695/R695.%04d.vtk"
 
   #vtkReader = vtk.vtkXMLImageDataReader() 
   vtkReader = vtk.vtkDataSetReader() 
